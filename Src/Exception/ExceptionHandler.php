@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Exception;
-
 use App\Helpers\App;
+use ErrorException;
 use Throwable;
 
 class ExceptionHandler {
@@ -13,6 +13,10 @@ class ExceptionHandler {
         } else {
             echo 'Something went wrong';
         }
+    }
+
+    public function convertWarningAndNoticesToException( $severity, $message, $file, $line ) {
+        throw new ErrorException( $message, $severity, $severity, $file, $line );
     }
 
 }

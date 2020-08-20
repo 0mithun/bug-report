@@ -1,11 +1,12 @@
 <?php
 declare ( strict_types = 1 );
 
-use App\Exception\ExceptionHandler;
+
 use App\Helpers\Config;
 
 require_once __DIR__ . '/vendor/autoload.php';
-set_exception_handler( [new ExceptionHandler(), 'handle'] );
+
+require_once __DIR__.'/Src/Exception/exception.php'
 
 // $application = new App;
 
@@ -20,5 +21,3 @@ set_exception_handler( [new ExceptionHandler(), 'handle'] );
 // } else {
 //     echo 'Run from browser';
 // }
-
-Config::get( 'addsfsdf' );
