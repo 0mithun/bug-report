@@ -1,12 +1,11 @@
 <?php
 declare ( strict_types = 1 );
 
-
-use App\Helpers\Config;
+use App\Logger\Logger;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-require_once __DIR__.'/Src/Exception/exception.php'
+require_once __DIR__ . '/Src/Exception/exception.php';
 
 // $application = new App;
 
@@ -21,3 +20,8 @@ require_once __DIR__.'/Src/Exception/exception.php'
 // } else {
 //     echo 'Run from browser';
 // }
+
+$logger = new Logger;
+
+$logger->log( 'info', 'test invalid level' );
+$logger->info( 'User created successfully', ['id' => 45] );
