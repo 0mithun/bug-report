@@ -1,0 +1,10 @@
+{
+    "name": "mypc/bug-report",
+    "authors": [
+        {
+            "name": "Mithun Halder",
+            "email": "mithun.tutorial.one@gmail.com"
+        }
+    ],
+    "require": {}
+}
