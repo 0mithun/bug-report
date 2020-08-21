@@ -2,7 +2,7 @@
 namespace App\Database;
 
 use App\Contracts\DatabaseConnectionInterface;
-use App\Exception\DatabaeConnectionException;
+use App\Exception\DatabaseConnectionException;
 use PDO;
 use PDOException;
 
@@ -24,7 +24,7 @@ class PDOConnection extends AbstractConnection implements DatabaseConnectionInte
             $this->connection->setAttribute( PDO::ATTR_DEFAULT_FETCH_MODE, $this->credentials['default_fetch'] );
         } catch ( PDOException $e ) {
             //throw $th;
-            throw new DatabaeConnectionException( $e->getMessage() );
+            throw new DatabaseConnectionException( $e->getMessage() );
         }
 
         return $this;
