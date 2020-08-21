@@ -35,7 +35,7 @@ class PDOConnection extends AbstractConnection implements DatabaseConnectionInte
     }
 
     protected function parseCredentials( array $credentials ): array{
-        $dsn = sprintf( "%s:host%s;dbname=%s", $credentials['driver'], $credentials['host'], $credentials['db_name'] );
+        $dsn = sprintf( "%s:host=%s;dbname=%s", $credentials['driver'], $credentials['host'], $credentials['db_name'] );
 
         return [$dsn, $credentials['username'], $credentials['db_user_password']];
     }
