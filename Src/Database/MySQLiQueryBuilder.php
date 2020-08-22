@@ -1,21 +1,33 @@
 <?php
+declare ( strict_types = 1 );
 namespace App\Database;
 
-use App\Database;
-use InvalidArgumentException;
+use App\Exception\InvalidArgumentException;
 use ReflectionClass;
 
 class MySQLiQueryBuilder extends QueryBuilder {
     private $resultSet;
     private $results;
-    const PARAM_TYP_INT = 'i';
-    const PARAM_TYP_STRING = 's';
-    const PARAM_TYP_DOUBLE = 'd';
+    const PARAM_TYPE_INT = 'i';
+    const PARAM_TYPE_STRING = 's';
+    const PARAM_TYPE_DOUBLE = 'd';
 
     public function get() {
+        // if ( !$this->resultSet ) {
+        //     $this->resultSet = $this->statement->get_result();
+        //     $this->results = $this->resultSet->fetch_all( MYSQLI_ASSOC );
+        // }
+
+        // return $this->results;
+        $results = [];
         if ( !$this->resultSet ) {
             $this->resultSet = $this->statement->get_result();
-            $this->results = $this->resultSet->fetch_all( MYSQLI_ASSOC );
+            if ( $this->resultSet ) {
+                while ( $object = $this->resultSet->fetch_object() ) {
+                    $results[] = $object;
+                }
+                $this->results = $results;
+            }
         }
 
         return $this->results;
@@ -39,7 +51,7 @@ class MySQLiQueryBuilder extends QueryBuilder {
 
     public function execute( $statement ) {
         if ( !$statement ) {
-            throw new InvalidArgumentException( 'MySQLi statement is false' );
+            throw new InvalidArgumentException( 'MySQLi get invalid argument' );
         }
 
         if ( $this->bindings ) {
@@ -65,10 +77,10 @@ class MySQLiQueryBuilder extends QueryBuilder {
         }
 
         $bindingTypes = $this->parseBindingTypes();
-        $bindings = &$bindingTypes;
+        $bindings[] = &$bindingTypes;
 
         for ( $i = 0; $i < $count; $i++ ) {
-            $bindings[] = $params[$i];
+            $bindings[] = &$params[$i];
         }
 
         return $bindings;
@@ -79,15 +91,15 @@ class MySQLiQueryBuilder extends QueryBuilder {
 
         foreach ( $this->bindings as $binding ) {
             if ( is_int( $binding ) ) {
-                $bindingTypes[] = self::PARAM_TYP_INT;
-            } else if ( is_string( $binding ) ) {
-                $bindingTypes[] = self::PARAM_TYP_STRING;
-            } else if ( is_float( $binding ) ) {
-                $bindingTypes[] = self::PARAM_TYP_DOUBLE;
+                $bindingTypes[] = self::PARAM_TYPE_INT;
+            }if ( is_string( $binding ) ) {
+                $bindingTypes[] = self::PARAM_TYPE_STRING;
+            }if ( is_float( $binding ) ) {
+                $bindingTypes[] = self::PARAM_TYPE_DOUBLE;
             }
         }
 
-        return implode( ' ', $bindingTypes );
+        return implode( '', $bindingTypes );
     }
 
     public function fetchInto( $className ) {
@@ -98,5 +110,15 @@ class MySQLiQueryBuilder extends QueryBuilder {
         }
 
         return $this->results = $rows;
+    }
+
+    public function beginTransaction(): void {
+        $this->connection->begin_transaction();
+    }
+
+    public function affected() {
+        $this->statement->store_result();
+
+        return $this->statement->affected_rows;
     }
 }

@@ -1,6 +1,5 @@
 <?php
-
-use App\Exception\BaseException;
+namespace App\Exception;
 
 class InvalidArgumentException extends BaseException {
 }

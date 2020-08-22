@@ -34,8 +34,6 @@ abstract class QueryBuilder {
     }
 
     public function where( $column, $operator = self::OPERATORS[0], $value = null ) {
-        //
-
         if ( !in_array( $operator, self::OPERATORS ) ) {
             if ( $value == null ) {
                 $value = $operator;
@@ -46,9 +44,6 @@ abstract class QueryBuilder {
         }
 
         $this->parseWhere( [$column => $value], $operator );
-        $query = $this->prepare( $this->getQuery( $this->operation ) );
-
-        $this->statement = $this->execute( $query );
 
         return $this;
     }
@@ -58,6 +53,14 @@ abstract class QueryBuilder {
             $this->placeholders[] = sprintf( "%s %s %s", $column, $operator, self::PLACEHOLDER );
             $this->bindings[] = $value;
         }
+
+        return $this;
+    }
+
+    public function runQuery() {
+        $query = $this->prepare( $this->getQuery( $this->operation ) );
+
+        $this->statement = $this->execute( $query );
 
         return $this;
     }
@@ -88,6 +91,8 @@ abstract class QueryBuilder {
         foreach ( $data as $column => $value ) {
             $this->fields[] = sprintf( "%s%s%s", $column, self::OPERATORS[0], "'$value'" );
         }
+
+        return $this;
     }
 
     public function delete() {
@@ -104,15 +109,19 @@ abstract class QueryBuilder {
     }
 
     public function find( $id ) {
-        return $this->where( 'id', $id )->first();
+        return $this->select()->where( 'id', $id )->runQuery()->first();
     }
 
     public function findOneBy( string $field, $value ) {
-        return $this->where( $field, $value )->first();
+        return $this->select()->where( $field, $value )->runQuery()->first();
     }
 
     public function first() {
-        return $this->count() ? $this->get()[0] : '';
+        return $this->count() ? $this->get()[0] : null;
+    }
+
+    public function rollback(): void {
+        $this->connection->rollback();
     }
 
     abstract public function get();
@@ -121,4 +130,9 @@ abstract class QueryBuilder {
     abstract public function prepare( $query );
     abstract public function execute( $statement );
     abstract public function fetchInto( $className );
+
+    abstract public function beginTransaction();
+
+    abstract public function affected();
+
 }

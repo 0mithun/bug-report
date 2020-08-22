@@ -12,7 +12,7 @@ trait Query {
             return sprintf( "INSERT INTO %s (%s) VALUES(%s)", $this->table, $this->fields, implode( ', ', $this->placeholders ) );
             break;
         case self::DML_TYPE_UPDATE:
-            return sprintf( "UPDATE %s SET (%s) WHERE %s", $this->table, implode( ', ', $this->fields ), implode( ' AND ', $this->placeholders ) );
+            return sprintf( "UPDATE %s SET %s WHERE %s", $this->table, implode( ', ', $this->fields ), implode( ' AND ', $this->placeholders ) );
             break;
         case self::DML_TYPE_DELETE:
             return sprintf( "DELETE FROM %s WHERE %s", $this->table, implode( ' AND ', $this->placeholders ) );
