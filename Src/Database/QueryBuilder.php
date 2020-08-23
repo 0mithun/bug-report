@@ -81,7 +81,7 @@ abstract class QueryBuilder {
         $query = $this->prepare( $this->getQuery( self::DML_TYPE_INSERT ) );
         $this->statement = $this->execute( $query );
 
-        return $this->lastInsertedId();
+        return (int) $this->lastInsertedId();
     }
 
     public function update( array $data ) {
